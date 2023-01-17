@@ -16,6 +16,7 @@ class Monitor:
         self.influx = influx_client
         self.peplink = peplink_client
         self.interval = interval
+        self.hostname_cache = {}
 
     def run_forever(self):
         while True:
@@ -29,6 +30,8 @@ class Monitor:
         time.sleep(self.interval)
 
     def run_once(self):
+        if not self.hostname_cache:
+            self.seed_hostname_cache()
         self.record_stats(chain(self.get_cell_stats(), self.get_client_stats()))
 
     def record_stats(self, stats):
@@ -69,9 +72,15 @@ class Monitor:
             yield network
             yield signal
 
+    def seed_hostname_cache(self):
+        clients = self.peplink.client_status(weight="lite")["list"]
+        for client in clients:
+            self.hostname_cache[client["mac"]] = client["name"]
+
     def get_client_stats(self):
         clients = self.peplink.client_status(weight="full", active_only=True)["list"]
         for client in clients:
+            self.hostname_cache[client["mac"]] = client["name"]
             if client["connectionType"] == "wireless" and client["active"]:
                 yield Measurement(
                     "client.signal",
@@ -89,9 +98,13 @@ class Monitor:
         usage = self.peplink.client_bandwidth_usage(period="monthly", from_=month_start)
         clients = usage["monthly"][month_start.date().isoformat()]
         for client in clients:
+            tags = {"ip": client["ip"], "mac": client["mac"]}
+            hostname = self.hostname_cache.get(client["mac"])
+            if hostname:
+                tags["name"] = hostname
             yield Measurement(
                 "client.usage",
-                {"ip": client["ip"]},
+                tags,
                 {
                     "upload": client["upload"],
                     "download": client["download"],
