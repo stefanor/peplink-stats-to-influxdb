@@ -87,16 +87,18 @@ class Monitor:
         clients = self.peplink.client_status(weight="full", active_only=True)["list"]
         for client in clients:
             self.hostname_cache[client["mac"]] = client["name"]
-            if client["active"] and client.get("connectionType") == "wireless":
-                yield Measurement(
-                    "client.signal",
-                    {
-                        "ip": client["ip"],
-                        "mac": client["mac"],
-                        "name": client["name"],
-                    },
-                    client["signal"],
-                )
+            if client["active"]:
+                if client.get("connectionType") == "wireless":
+                    yield Measurement(
+                        "client.signal",
+                        {
+                            "ip": client["ip"],
+                            "mac": client["mac"],
+                            "name": client["name"],
+                        },
+                        client["signal"],
+                    )
+
                 assert client["speed"]["unit"] == "kbps"
                 yield Measurement(
                     "client.speed",
