@@ -12,7 +12,9 @@ log = logging.getLogger(__name__)
 class CellularMonitor(Monitor):
     refresh_rate: int = 1  # seconds
 
-    def update(self, peplink_client: PepLinkClientService) -> Generator[Measurement, None, None]:
+    def update(
+        self, peplink_client: PepLinkClientService
+    ) -> Generator[Measurement, None, None]:
         status = peplink_client.wan_status()
         for id_ in status["order"]:
             data = status[str(id_)]

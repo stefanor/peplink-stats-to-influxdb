@@ -21,5 +21,7 @@ class Monitor:
     def __init__(self, global_state: GlobalState) -> None:
         self.global_state = global_state
 
-    def update(self, peplink_client: PepLinkClientService) -> Generator[Measurement, None, None]:
+    def update(
+        self, peplink_client: PepLinkClientService
+    ) -> Generator[Measurement, None, None]:
         raise NotImplementedError("update() needs to be provided")

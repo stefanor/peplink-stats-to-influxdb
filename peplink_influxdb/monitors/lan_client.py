@@ -8,7 +8,9 @@ from .base import Measurement, Monitor
 class LanClientMonitor(Monitor):
     refresh_rate: int = 1  # seconds
 
-    def update(self, peplink_client: PepLinkClientService) -> Generator[Measurement, None, None]:
+    def update(
+        self, peplink_client: PepLinkClientService
+    ) -> Generator[Measurement, None, None]:
         clients = peplink_client.client_status(weight="full", active_only=True)["list"]
         for client in clients:
             mac = client["mac"]

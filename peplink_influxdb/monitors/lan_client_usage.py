@@ -14,7 +14,9 @@ class LANClientUsageMonitor(Monitor):
         for client in clients:
             self.hostname_cache[client["mac"]] = client["name"]
 
-    def update(self, peplink_client: PepLinkClientService) -> Generator[Measurement, None, None]:
+    def update(
+        self, peplink_client: PepLinkClientService
+    ) -> Generator[Measurement, None, None]:
         if not self.global_state.hostname_cache:
             self.seed_hostname_cache(peplink_client)
 

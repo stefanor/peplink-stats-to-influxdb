@@ -8,7 +8,9 @@ from .base import Measurement, Monitor
 class WANTrafficMonitor(Monitor):
     refresh_rate: int = 1  # seconds
 
-    def update(self, peplink_client: PepLinkClientService) -> Generator[Measurement, None, None]:
+    def update(
+        self, peplink_client: PepLinkClientService
+    ) -> Generator[Measurement, None, None]:
         stats = peplink_client.traffic_status()
         assert stats["lifetime"]["unit"] == "MB"
         yield Measurement("wan.lifetime_usage", {}, stats["lifetime"]["all"]["overall"])
