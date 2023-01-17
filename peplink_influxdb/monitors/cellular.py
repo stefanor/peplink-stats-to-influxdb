@@ -29,7 +29,10 @@ class CellularMonitor(Monitor):
                     iccid = sim_data["iccid"]
                     self.global_state.active_sim[id_] = sim_data["iccid"]
 
-            dataTech = cellular["dataTechnology"]
+
+            if "mcc" not in cellular:  # Not Connected
+                continue
+
             network = Measurement(
                 "cellular.network",
                 {
@@ -37,12 +40,14 @@ class CellularMonitor(Monitor):
                     "wan": id_,
                 },
                 {
-                    "technology": dataTech,
                     "mcc": int(cellular["mcc"]),
                     "mnc": int(cellular["mnc"]),
                 },
             )
             # LTE is the only value seen so far in the wild
+            dataTech = cellular.get("dataTechnology")
+            if dataTech:
+                network.fields["technology"] = dataTech
             generation = {
                 "5G": 5.0,
                 "LTE": 4.0,
