@@ -3,7 +3,6 @@ import logging
 import re
 import time
 from collections import namedtuple
-from itertools import chain
 
 Measurement = namedtuple("Measurement", ["measurement", "tags", "fields"])
 
