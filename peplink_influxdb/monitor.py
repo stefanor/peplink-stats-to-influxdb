@@ -91,6 +91,19 @@ class Monitor:
                     },
                     client["signal"],
                 )
+                assert client["speed"]["unit"] == "kbps"
+                yield Measurement(
+                    "client.speed",
+                    {
+                        "ip": client["ip"],
+                        "mac": client["mac"],
+                        "name": client["name"],
+                    },
+                    {
+                        "upload": client["speed"]["upload"],
+                        "download": client["speed"]["download"],
+                    },
+                )
 
         month_start = datetime.datetime.now().replace(
             day=1, hour=0, minute=0, second=0, microsecond=0
