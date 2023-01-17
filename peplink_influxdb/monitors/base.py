@@ -1,5 +1,5 @@
 from collections import namedtuple
-from typing import Generator
+from typing import Generator, Union
 
 from peplink_api.services import PepLinkClientService
 
@@ -11,7 +11,9 @@ class GlobalState:
     # For monitors to share state
     # TODO: refactor into a pub/sub mechanism
     hostname_cache: dict[str, str] = {}  # mac: name
-    active_sim: dict[int, str] = {}  # WAN id: ICCID
+    active_cell_tags: dict[
+        int, dict[str, Union[int, str]]
+    ] = {}  # WAN id: {iccid, mcc, mnc, carrier}
 
 
 class Monitor:

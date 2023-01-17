@@ -19,14 +19,12 @@ class WANTrafficMonitor(Monitor):
         for id_ in stats["bandwidth"]["order"]:
             wan_stats = stats["bandwidth"][str(id_)]
             tags = {"wan": id_}
-            if id_ in self.global_state.active_sim:
-                tags["iccid"] = self.global_state.active_sim[id_]
+            tags.update(self.global_state.active_cell_tags.get(id_, {}))
             yield Measurement("wan.speed", tags, wan_stats["overall"])
 
         assert stats["traffic"]["unit"] == "MB"
         for id_ in stats["traffic"]["order"]:
             wan_stats = stats["traffic"][str(id_)]
             tags = {"wan": id_}
-            if id_ in self.global_state.active_sim:
-                tags["iccid"] = self.global_state.active_sim[id_]
+            tags.update(self.global_state.active_cell_tags.get(id_, {}))
             yield Measurement("wan.usage", tags, wan_stats["overall"])

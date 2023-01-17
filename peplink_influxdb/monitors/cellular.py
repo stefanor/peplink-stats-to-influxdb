@@ -27,22 +27,24 @@ class CellularMonitor(Monitor):
                 sim_data = cellular["sim"][str(sim)]
                 if sim_data["active"]:
                     iccid = sim_data["iccid"]
-                    self.global_state.active_sim[id_] = sim_data["iccid"]
 
+            active_cell_tags = {
+                "iccid": iccid,
+                "wan": id_,
+            }
+            self.global_state.active_cell_tags[id_] = active_cell_tags
 
             if "mcc" not in cellular:  # Not Connected
                 continue
 
+            active_cell_tags["mcc"] = int(cellular["mcc"])
+            active_cell_tags["mnc"] = int(cellular["mnc"])
+            active_cell_tags["carrier"] = cellular["carrier"]["name"]
+
             network = Measurement(
                 "cellular.network",
-                {
-                    "iccid": iccid,
-                    "wan": id_,
-                },
-                {
-                    "mcc": int(cellular["mcc"]),
-                    "mnc": int(cellular["mnc"]),
-                },
+                active_cell_tags,
+                {},
             )
             # LTE is the only value seen so far in the wild
             dataTech = cellular.get("dataTechnology")
@@ -63,10 +65,7 @@ class CellularMonitor(Monitor):
 
             signal = Measurement(
                 "cellular.signal",
-                {
-                    "iccid": iccid,
-                    "wan": id_,
-                },
+                active_cell_tags,
                 {
                     "level": cellular["signalLevel"],
                 },
