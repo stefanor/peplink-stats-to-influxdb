@@ -20,15 +20,16 @@ class CellularMonitor(Monitor):
             data = status[str(id_)]
             if data["type"] != "cellular":
                 continue
+            cellular = data["cellular"]
             iccid = None
 
-            for sim in data["cellular"]["sim"]["order"]:
-                sim_data = data["cellular"]["sim"][str(sim)]
+            for sim in cellular["sim"]["order"]:
+                sim_data = cellular["sim"][str(sim)]
                 if sim_data["active"]:
                     iccid = sim_data["iccid"]
                     self.global_state.active_sim[id_] = sim_data["iccid"]
 
-            dataTech = data["cellular"]["dataTechnology"]
+            dataTech = cellular["dataTechnology"]
             network = Measurement(
                 "cellular.network",
                 {
@@ -37,8 +38,8 @@ class CellularMonitor(Monitor):
                 },
                 {
                     "technology": dataTech,
-                    "mcc": int(data["cellular"]["mcc"]),
-                    "mnc": int(data["cellular"]["mnc"]),
+                    "mcc": int(cellular["mcc"]),
+                    "mnc": int(cellular["mnc"]),
                 },
             )
             # LTE is the only value seen so far in the wild
@@ -62,12 +63,12 @@ class CellularMonitor(Monitor):
                     "wan": id_,
                 },
                 {
-                    "level": data["cellular"]["signalLevel"],
+                    "level": cellular["signalLevel"],
                 },
             )
-            for rat in data["cellular"]["rat"]:
+            for rat in cellular["rat"]:
                 for band in rat["band"]:
-                    if data["cellular"]["dataTechnology"] == "LTE":
+                    if dataTech == "LTE":
                         m = re.match(r"^LTE Band (\d+) \((\d+) MHz\)$", band["name"])
                         network.fields["band"] = int(m.group(1))
                         network.fields["frequency"] = int(m.group(2))
