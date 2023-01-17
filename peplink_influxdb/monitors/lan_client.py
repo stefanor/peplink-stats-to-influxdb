@@ -19,7 +19,7 @@ class LanClientMonitor(Monitor):
                 "mac": mac,
                 "name": name,
             }
-            if client["connectionType"] == "wireless":
+            if "signal" in client:
                 yield Measurement(
                     "client.signal",
                     keys,
