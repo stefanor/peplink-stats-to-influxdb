@@ -70,6 +70,19 @@ class Monitor:
             yield signal
 
     def get_client_stats(self):
+        clients = self.peplink.client_status(weight="full", active_only=True)["list"]
+        for client in clients:
+            if client["connectionType"] == "wireless" and client["active"]:
+                yield Measurement(
+                    "client.signal",
+                    {
+                        "ip": client["ip"],
+                        "mac": client["mac"],
+                        "name": client["name"],
+                    },
+                    client["signal"],
+                )
+
         month_start = datetime.datetime.now().replace(
             day=1, hour=0, minute=0, second=0, microsecond=0
         )
