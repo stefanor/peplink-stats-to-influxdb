@@ -20,16 +20,21 @@ class CellularMonitor(Monitor):
             data = status[str(id_)]
             if data["type"] != "cellular":
                 continue
+            iccid = None
 
             for sim in data["cellular"]["sim"]["order"]:
                 sim_data = data["cellular"]["sim"][str(sim)]
                 if sim_data["active"]:
+                    iccid = sim_data["iccid"]
                     self.global_state.active_sim[id_] = sim_data["iccid"]
 
             dataTech = data["cellular"]["dataTechnology"]
             network = Measurement(
                 "cellular.network",
-                {"wan": id_},
+                {
+                    "iccid": iccid,
+                    "wan": id_,
+                },
                 {
                     "technology": dataTech,
                     "mcc": int(data["cellular"]["mcc"]),
@@ -52,7 +57,10 @@ class CellularMonitor(Monitor):
 
             signal = Measurement(
                 "cellular.signal",
-                {"wan": id_},
+                {
+                    "iccid": iccid,
+                    "wan": id_,
+                },
                 {
                     "level": data["cellular"]["signalLevel"],
                 },
