@@ -32,7 +32,13 @@ class Monitor:
     def run_once(self):
         if not self.hostname_cache:
             self.seed_hostname_cache()
-        self.record_stats(chain(self.get_cell_stats(), self.get_client_stats()))
+        self.record_stats(
+            chain(
+                self.get_cell_stats(),
+                self.get_client_stats(),
+                self.get_global_traffic_stats(),
+            )
+        )
 
     def record_stats(self, stats):
         self.influx.write_points([stat._asdict() for stat in stats])
@@ -123,3 +129,18 @@ class Monitor:
                     "download": client["download"],
                 },
             )
+
+    def get_global_traffic_stats(self):
+        stats = self.peplink.traffic_status()
+        assert stats["bandwidth"]["unit"] == "kbps"
+        for id_ in stats["bandwidth"]["order"]:
+            wan_stats = stats["bandwidth"][str(id_)]
+            yield Measurement("wan.speed", {"wan": id_}, wan_stats["overall"])
+
+        assert stats["lifetime"]["unit"] == "MB"
+        yield Measurement("wan.lifetime_usage", {}, stats["lifetime"]["all"]["overall"])
+
+        assert stats["traffic"]["unit"] == "MB"
+        for id_ in stats["traffic"]["order"]:
+            wan_stats = stats["traffic"][str(id_)]
+            yield Measurement("wan.usage", {"wan": id_}, wan_stats["overall"])
