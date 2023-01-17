@@ -1,9 +1,9 @@
 import argparse
 import configparser
-import time
 
 from influxdb import InfluxDBClient
 from peplink_api.services import PepLinkClientService
+import urllib3
 
 from peplink_influxdb.monitor import Monitor
 
@@ -30,6 +30,8 @@ def main():
         name="1yr", duration="365d", replication=1, default=True
     )
     influx.drop_retention_policy(name="autogen")
+
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
     peplink = PepLinkClientService(
         config["peplink"]["url"],
