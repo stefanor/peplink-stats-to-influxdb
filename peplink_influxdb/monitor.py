@@ -73,7 +73,7 @@ class Monitor:
         month_start = datetime.datetime.now().replace(
             day=1, hour=0, minute=0, second=0, microsecond=0
         )
-        usage = self.peplink.bandwidth_usage(period="monthly", from_=month_start)
+        usage = self.peplink.client_bandwidth_usage(period="monthly", from_=month_start)
         clients = usage["monthly"][month_start.date().isoformat()]
         for client in clients:
             yield Measurement(
