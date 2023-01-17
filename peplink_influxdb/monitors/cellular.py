@@ -19,6 +19,11 @@ class CellularMonitor(Monitor):
             if data["type"] != "cellular":
                 continue
 
+            for sim in data["cellular"]["sim"]["order"]:
+                sim_data = data["cellular"]["sim"][str(sim)]
+                if sim_data["active"]:
+                    self.global_state.active_sim[id_] = sim_data["iccid"]
+
             dataTech = data["cellular"]["dataTechnology"]
             network = Measurement(
                 "cellular.network",

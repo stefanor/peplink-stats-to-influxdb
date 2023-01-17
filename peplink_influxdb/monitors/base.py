@@ -11,6 +11,7 @@ class GlobalState:
     # For monitors to share state
     # TODO: refactor into a pub/sub mechanism
     hostname_cache: dict[str, str] = {}  # mac: name
+    active_sim: dict[int, str] = {}  # WAN id: ICCID
 
 
 class Monitor:
