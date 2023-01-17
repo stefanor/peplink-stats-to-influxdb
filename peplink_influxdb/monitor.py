@@ -20,28 +20,28 @@ class Monitor:
 
     def run_forever(self):
         while True:
-            try:
-                self.run_once()
-            except:
-                log.exception("Error")
+            self.run_once(log_errors=True)
             self.sleep()
 
     def sleep(self):
         time.sleep(self.interval)
 
-    def run_once(self):
+    def run_once(self, log_errors=False):
         if not self.hostname_cache:
             self.seed_hostname_cache()
-        self.record_stats(
-            chain(
-                self.get_cell_stats(),
-                self.get_client_stats(),
-                self.get_global_traffic_stats(),
-            )
-        )
 
-    def record_stats(self, stats):
-        self.influx.write_points([stat._asdict() for stat in stats])
+        points = []
+        for iterator in (self.get_cell_stats, self.get_client_stats,
+                         self.get_global_traffic_stats):
+            try:
+                for statistic in iterator():
+                    points.append(statistic._asdict())
+            except:
+                if not log_errors:
+                    raise
+                log.exception("Error")
+        self.influx.write_points(points)
+
 
     def get_cell_stats(self):
         status = self.peplink.wan_status()
