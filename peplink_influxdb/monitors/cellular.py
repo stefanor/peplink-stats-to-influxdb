@@ -67,10 +67,11 @@ class CellularMonitor(Monitor):
             signal = Measurement(
                 "cellular.signal",
                 active_cell_tags,
-                {
-                    "level": cellular["signalLevel"],
-                },
+                {},
             )
+            if "signalLevel" in cellular:
+                signal.fields["level"] = cellular["signalLevel"]
+
             for rat in cellular["rat"]:
                 for band in rat["band"]:
                     if dataTech == "LTE":
