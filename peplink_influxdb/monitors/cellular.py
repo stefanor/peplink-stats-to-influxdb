@@ -59,7 +59,8 @@ class CellularMonitor(Monitor):
                 "GPRS": 2.0,
             }.get(dataTech)
             if generation is None:
-                log.error("Unknown dataTechnology: %s", dataTech)
+                if dataTech is not None:
+                    log.error("Unknown dataTechnology: %s", dataTech)
             else:
                 network.fields["generation"] = generation
 
