@@ -78,10 +78,13 @@ class CellularMonitor(Monitor):
                         m = re.match(r"^LTE Band (\d+) \((\d+) MHz\)$", band["name"])
                         network.fields["band"] = int(m.group(1))
                         network.fields["frequency"] = int(m.group(2))
-                    signal.fields["rsrp"] = band["signal"]["rsrp"]
-                    signal.fields["rsrq"] = band["signal"]["rsrq"]
-                    signal.fields["rssi"] = band["signal"]["rssi"]
-                    signal.fields["sinr"] = band["signal"]["sinr"]
-                    break  # For now, we only report the first LTE band
+                    if "rsrp" in band["signal"]:
+                        signal.fields["rsrp"] = band["signal"]["rsrp"]
+                        signal.fields["rsrq"] = band["signal"]["rsrq"]
+                        signal.fields["rssi"] = band["signal"]["rssi"]
+                        signal.fields["sinr"] = band["signal"]["sinr"]
+                        break  # For now, we only report the first LTE band
+                    else:
+                        log.error("No rsrp in signal: %r", band["signal"])
             yield network
             yield signal
