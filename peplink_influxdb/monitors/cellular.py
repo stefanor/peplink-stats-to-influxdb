@@ -72,7 +72,7 @@ class CellularMonitor(Monitor):
             if "signalLevel" in cellular:
                 signal.fields["level"] = cellular["signalLevel"]
 
-            for rat in cellular["rat"]:
+            for rat in cellular.get("rat", []):
                 for band in rat["band"]:
                     if dataTech in ("LTE", "LTE-A"):
                         m = re.match(r"^LTE Band (\d+) \((\d+) MHz\)$", band["name"])
