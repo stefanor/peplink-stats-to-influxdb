@@ -46,17 +46,17 @@ class CellularMonitor(Monitor):
                 active_cell_tags,
                 {},
             )
-            # LTE is the only value seen so far in the wild
             dataTech = cellular.get("dataTechnology")
             if dataTech:
                 network.fields["technology"] = dataTech
             generation = {
-                "5G": 5.0,
-                "LTE": 4.0,
-                "HSPA": 3.5,
-                "UMTS": 3.0,
-                "EGPRS": 2.5,
-                "GPRS": 2.0,
+                "5G": 5.0,  # Guess
+                "LTE-A": 4.5,  # Seen
+                "LTE": 4.0,  # Seen
+                "HSPA": 3.5,  # Guess
+                "UMTS": 3.0,  # Guess
+                "EGPRS": 2.5,  # Guess
+                "GPRS": 2.0,  # Guess
             }.get(dataTech)
             if generation is None:
                 if dataTech is not None:
@@ -74,7 +74,7 @@ class CellularMonitor(Monitor):
 
             for rat in cellular["rat"]:
                 for band in rat["band"]:
-                    if dataTech == "LTE":
+                    if dataTech in ("LTE", "LTE-A"):
                         m = re.match(r"^LTE Band (\d+) \((\d+) MHz\)$", band["name"])
                         network.fields["band"] = int(m.group(1))
                         network.fields["frequency"] = int(m.group(2))
