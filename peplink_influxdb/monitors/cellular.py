@@ -76,8 +76,11 @@ class CellularMonitor(Monitor):
                 for band in rat["band"]:
                     if dataTech in ("LTE", "LTE-A"):
                         m = re.match(r"^LTE Band (\d+) \((\d+) MHz\)$", band["name"])
-                        network.fields["band"] = int(m.group(1))
-                        network.fields["frequency"] = int(m.group(2))
+                        if m:
+                            network.fields["band"] = int(m.group(1))
+                            network.fields["frequency"] = int(m.group(2))
+                        else:
+                            log.error("Unknown band: %r", band)
                     if "rsrp" in band["signal"]:
                         signal.fields["rsrp"] = band["signal"]["rsrp"]
                         signal.fields["rsrq"] = band["signal"]["rsrq"]
