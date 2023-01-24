@@ -82,5 +82,6 @@ class CellularMonitor(Monitor):
                     signal.fields["rsrq"] = band["signal"]["rsrq"]
                     signal.fields["rssi"] = band["signal"]["rssi"]
                     signal.fields["sinr"] = band["signal"]["sinr"]
+                    break  # For now, we only report the first LTE band
             yield network
             yield signal
