@@ -25,7 +25,7 @@ class CellularMonitor(Monitor):
 
             for sim in cellular["sim"]["order"]:
                 sim_data = cellular["sim"][str(sim)]
-                if sim_data["active"]:
+                if sim_data["active"] and "iccid" in sim_data:
                     iccid = sim_data["iccid"]
 
             active_cell_tags = {
