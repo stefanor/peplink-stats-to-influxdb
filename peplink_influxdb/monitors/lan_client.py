@@ -14,13 +14,14 @@ class LanClientMonitor(Monitor):
         clients = peplink_client.client_status(weight="full", active_only=True)["list"]
         for client in clients:
             mac = client["mac"]
-            name = client["name"]
-            self.global_state.hostname_cache[mac] = name
+            name = client.get("name")
             keys = {
                 "ip": client["ip"],
                 "mac": mac,
-                "name": name,
             }
+            if name:
+                keys["name"] = name
+                self.global_state.hostname_cache[mac] = name
             if "signal" in client:
                 yield Measurement(
                     "client.signal",
