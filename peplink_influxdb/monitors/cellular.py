@@ -81,7 +81,7 @@ class CellularMonitor(Monitor):
                             network.fields["frequency"] = int(m.group(2))
                         else:
                             log.error("Unknown band: %r", band)
-                    if "rsrp" in band.get("signal", {}):
+                    if "sinr" in band.get("signal", {}):
                         signal.fields["rsrp"] = band["signal"]["rsrp"]
                         signal.fields["rsrq"] = band["signal"]["rsrq"]
                         signal.fields["rssi"] = band["signal"]["rssi"]
@@ -89,6 +89,6 @@ class CellularMonitor(Monitor):
                         break  # For now, we only report the first LTE band
                     else:
                         if "signal" in band:
-                            log.error("No rsrp in signal: %r", band["signal"])
+                            log.error("No sinr in signal: %r", band["signal"])
             yield network
             yield signal
