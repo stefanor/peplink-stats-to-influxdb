@@ -82,10 +82,9 @@ class CellularMonitor(Monitor):
                         else:
                             log.error("Unknown band: %r", band)
                     if "sinr" in band.get("signal", {}):
-                        signal.fields["rsrp"] = band["signal"]["rsrp"]
-                        signal.fields["rsrq"] = band["signal"]["rsrq"]
-                        signal.fields["rssi"] = band["signal"]["rssi"]
-                        signal.fields["sinr"] = band["signal"]["sinr"]
+                        for metric in ("rsrp", "rsrq", "rssi", "sinr"):
+                            if metric in band["signal"]:
+                                signal.fields[metric] = band["signal"][metric]
                         break  # For now, we only report the first LTE band
                     else:
                         if "signal" in band:
