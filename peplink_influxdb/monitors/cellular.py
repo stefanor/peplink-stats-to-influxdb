@@ -89,5 +89,7 @@ class CellularMonitor(Monitor):
                     else:
                         if "signal" in band:
                             log.error("No sinr in signal: %r", band["signal"])
-            yield network
-            yield signal
+            if network.fields:
+                yield network
+            if signal.fields:
+                yield signal
