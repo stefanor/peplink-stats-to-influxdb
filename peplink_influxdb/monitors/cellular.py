@@ -81,19 +81,21 @@ class CellularMonitor(Monitor):
                             network.fields["frequency"] = int(m.group(2))
                         else:
                             log.error("Unknown band: %r", band)
+                    metrics = None
                     if "sinr" in band.get("signal", {}):
-                        for metric in ("rsrp", "rsrq", "rssi", "sinr"):
-                            if metric in band["signal"]:
-                                signal.fields[metric] = band["signal"][metric]
-                        break  # For now, we only report the first LTE band
+                        metrics = ("rsrp", "rsrq", "rssi", "sinr")
                     elif "ecio" in band.get("signal", {}):
-                        for metric in ("rssi", "ecio", "rscp"):
-                            if metric in band["signal"]:
-                                signal.fields[metric] = band["signal"][metric]
-                        break  # For now, we only report the first 3G band
+                        metrics = ("rssi", "ecio", "rscp")
                     else:
                         if "signal" in band:
                             log.error("No sinr/ecio in signal: %r", band["signal"])
+                    if metrics:
+                        for metric in metrics:
+                            if metric in band["signal"]:
+                                value = band["signal"][metric]
+                                if metric in signal.fields:
+                                    value = max(signal.fields[metric], value)
+                                signal.fields[metric] = value
             if network.fields:
                 yield network
             if signal.fields:
