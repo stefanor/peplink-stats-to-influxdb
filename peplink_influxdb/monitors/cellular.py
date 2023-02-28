@@ -73,6 +73,7 @@ class CellularMonitor(Monitor):
             if "signalLevel" in cellular:
                 signal.fields["level"] = cellular["signalLevel"]
 
+            signal.fields["connections"] = 0
             for rat in cellular.get("rat", []):
                 for band in rat["band"]:
                     if dataTech in ("LTE", "LTE-A", "WCDMA"):
@@ -91,6 +92,7 @@ class CellularMonitor(Monitor):
                         if "signal" in band:
                             log.error("No sinr/ecio in signal: %r", band["signal"])
                     if metrics:
+                        signal.fields["connections"] += 1
                         for metric in metrics:
                             if metric in band["signal"]:
                                 value = band["signal"][metric]
