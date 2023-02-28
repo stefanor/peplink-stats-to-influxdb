@@ -79,8 +79,13 @@ class CellularMonitor(Monitor):
                     if dataTech in ("LTE", "LTE-A", "WCDMA"):
                         m = re.match(r"^(?:LTE|WCDMA) Band (\d+) \((\d+) MHz\)$", band["name"])
                         if m:
-                            network.fields["band"] = int(m.group(1))
-                            network.fields["frequency"] = int(m.group(2))
+                            band_no = int(m.group(1))
+                            frequency = int(m.group(2))
+                            if "band" in network.fields:
+                                band_no = min(network.fields["band"], band_no)
+                                frequency = min(network.fields["frequency"], frequency)
+                            network.fields["band"] = band_no
+                            network.fields["frequency"] = frequency
                         else:
                             log.error("Unknown band: %r", band)
                     metrics = None
