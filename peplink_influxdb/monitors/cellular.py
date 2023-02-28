@@ -63,6 +63,7 @@ class CellularMonitor(Monitor):
                     log.error("Unknown dataTechnology: %s", dataTech)
             else:
                 network.fields["generation"] = generation
+            network.fields["connected"] = data["statusLed"] == "green"
 
             signal = Measurement(
                 "cellular.signal",
