@@ -1,5 +1,5 @@
 from collections import namedtuple
-from typing import Generator, Union
+from typing import Generator, Optional, Union
 
 from peplink_api.services import PepLinkClientService
 
@@ -14,6 +14,7 @@ class GlobalState:
     active_cell_tags: dict[
         int, dict[str, Union[int, str]]
     ] = {}  # WAN id: {iccid, mcc, mnc, carrier}
+    time_zone: Optional[str] = None
 
 
 class Monitor:
