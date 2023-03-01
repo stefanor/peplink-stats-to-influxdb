@@ -26,7 +26,7 @@ class LANClientUsageMonitor(Monitor):
         usage = peplink_client.client_bandwidth_usage(
             period="monthly", from_=month_start
         )
-        clients = usage["monthly"][month_start.date().isoformat()]
+        clients = usage["monthly"].get(month_start.date().isoformat(), [])
         for client in clients:
             mac = client["mac"]
             tags = {"ip": client["ip"], "mac": mac}
