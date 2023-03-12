@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Generator
 from zoneinfo import ZoneInfo
 
+from dateutil.relativedelta import relativedelta
 from peplink_api.services import PepLinkClientService
 
 from .base import Measurement, Monitor
@@ -32,8 +33,9 @@ class LANClientUsageMonitor(Monitor):
         month_start = datetime.now().replace(
             day=1, hour=0, minute=0, second=0, microsecond=0, tzinfo=tz
         )
+        month_end = month_start + relativedelta(months=1)
         usage = peplink_client.client_bandwidth_usage(
-            period="monthly", from_=month_start
+            period="monthly", from_=month_start, to=month_end
         )
         clients = usage["monthly"].get(month_start.date().isoformat(), [])
         for client in clients:
