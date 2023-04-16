@@ -77,7 +77,7 @@ class CellularMonitor(Monitor):
             for rat in cellular.get("rat", []):
                 for band in rat["band"]:
                     if dataTech in ("LTE", "LTE-A", "WCDMA"):
-                        m = re.match(r"^(?:LTE|WCDMA) Band (\d+) \((\d+) MHz\)$", band["name"])
+                        m = re.match(r"^(?:LTE|WCDMA) Band (\d+) \((?:\w+ )?(\d+)(?:/\d+)? MHz\)$", band["name"])
                         if m:
                             band_no = int(m.group(1))
                             frequency = int(m.group(2))
