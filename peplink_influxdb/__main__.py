@@ -39,7 +39,8 @@ def main():
         config["peplink"]["client_secret"],
     )
 
-    m = Monitor(influx, peplink, config["monitor"].getint("interval"))
+    m = Monitor(influx, peplink, config["monitor"].getint("interval"),
+                time_zone=config["peplink"]["time_zone"])
     # To confirm that everything works:
     m.run_once()
     m.sleep()

@@ -11,10 +11,6 @@ from .base import Measurement, Monitor
 class LANClientUsageMonitor(Monitor):
     refresh_rate: int = 30  # seconds
 
-    def lookup_device_timezone(self, peplink_client):
-        time = peplink_client.time_config()
-        self.global_state.time_zone = time["timeZone"]
-
     def seed_hostname_cache(self, peplink_client: PepLinkClientService) -> None:
         clients = self.peplink.client_status(weight="lite")["list"]
         for client in clients:
@@ -25,8 +21,6 @@ class LANClientUsageMonitor(Monitor):
     ) -> Generator[Measurement, None, None]:
         if not self.global_state.hostname_cache:
             self.seed_hostname_cache(peplink_client)
-        if not self.global_state.time_zone:
-            self.lookup_device_timezone(peplink_client)
 
         tz = ZoneInfo(self.global_state.time_zone)
 

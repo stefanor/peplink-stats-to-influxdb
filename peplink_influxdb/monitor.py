@@ -12,13 +12,14 @@ log = logging.getLogger(__name__)
 
 
 class Monitor:
-    def __init__(self, influx_client, peplink_client, interval):
+    def __init__(self, influx_client, peplink_client, interval, time_zone):
         self.influx = influx_client
         self.peplink = peplink_client
         self.interval = interval
         self.hostname_cache = {}
         self.monitors = []
         self.global_state = GlobalState()
+        self.global_state.time_zone = time_zone
         for monitor in [
             CellularMonitor,
             LanClientMonitor,
